@@ -46,6 +46,7 @@ function LeadForm() {
   const [step, setStep] = useState('phone')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [phoneInfo, setPhoneInfo] = useState('')
   const [token, setToken] = useState('')
   const submittingRef = useRef(false)
 
@@ -176,7 +177,7 @@ function LeadForm() {
     e.preventDefault()
     if (submittingRef.current) return
     submittingRef.current = true
-    setLoading(true); setError('')
+    setLoading(true); setError(''); setPhoneInfo('')
     try {
       const payload = { phone, country_code: countryCode }
       console.log('OTP Request payload:', payload)
@@ -191,7 +192,12 @@ function LeadForm() {
         if (data.errors) { const f = Object.values(data.errors)[0]; throw new Error(Array.isArray(f) ? f[0] : f) }
         throw new Error(data.message || 'حدث خطأ، حاول مرة أخرى')
       }
-      setIsNewUser(data.data?.is_new_user || false)
+      const isNew = data.data?.is_new_user || false
+      setIsNewUser(isNew)
+      if (!isNew) {
+        setPhoneInfo('هذا الرقم مسجّل بالفعل. يمكنك استخدامه لتسجيل الدخول من خلال التطبيق.')
+        return
+      }
       setCountdown(300)
       setStep('otp')
       setTimeout(() => otpRef.current?.focus(), 100)
@@ -442,6 +448,7 @@ function LeadForm() {
         </select>
         <input type="tel" placeholder="رقم الهاتف" required value={phone} onChange={e => setPhone(e.target.value.replace(/\D/g, ''))} dir="ltr" />
       </div>
+      {phoneInfo && <p className="form-info">{phoneInfo}</p>}
       {error && <p className="form-error">{error}</p>}
       <button type="submit" className="btn-submit" disabled={loading}>{loading ? 'جاري الإرسال...' : 'ابدأ التدريس وحقّق دخلاً إضافياً — مجاناً'}</button>
       <p className="form-privacy">بياناتك محمية ولن نشاركها</p>
