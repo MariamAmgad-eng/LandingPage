@@ -1,6 +1,46 @@
 import { useState, useEffect, useRef } from 'react'
 import './App.css'
 
+// ===== Scroll Reveal Hook =====
+function useScrollReveal(threshold = 0.15) {
+  const ref = useRef(null)
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('revealed')
+            observer.unobserve(entry.target)
+          }
+        })
+      },
+      { threshold }
+    )
+    const targets = el.querySelectorAll('.reveal')
+    targets.forEach((t) => observer.observe(t))
+    return () => observer.disconnect()
+  }, [threshold])
+  return ref
+}
+
+// ===== Ripple Utility =====
+function createRipple(e) {
+  const btn = e.currentTarget
+  const rect = btn.getBoundingClientRect()
+  const size = Math.max(rect.width, rect.height)
+  const x = e.clientX - rect.left - size / 2
+  const y = e.clientY - rect.top - size / 2
+  const span = document.createElement('span')
+  span.className = 'ripple-span'
+  span.style.width = span.style.height = `${size}px`
+  span.style.left = `${x}px`
+  span.style.top = `${y}px`
+  btn.appendChild(span)
+  span.addEventListener('animationend', () => span.remove())
+}
+
 const API = {
   checkUser: '/api/v1/auth/check-user',
   otpRequest: '/api/v1/auth/otp/request',
@@ -344,7 +384,7 @@ function LeadForm() {
           <input ref={otpRef} type="text" inputMode="numeric" autoComplete="one-time-code" maxLength={4} placeholder="- - - -" className="otp-input" value={otp} onChange={e => setOtp(e.target.value.replace(/\D/g, '').slice(0, 4))} />
         </div>
         {error && <p className="form-error">{error}</p>}
-        <button type="submit" className="btn-submit" disabled={loading || otp.length < 4}>{loading ? 'جاري التحقق...' : 'تأكيد'}</button>
+        <button type="submit" className={`btn-submit${loading ? ' is-loading' : ''}`} disabled={loading || otp.length < 4} onClick={createRipple}>{loading ? 'جاري التحقق...' : 'تأكيد'}</button>
         <div className="otp-resend">
           {countdown > 0
             ? <span className="otp-countdown">إعادة الإرسال خلال {countdown} ثانية</span>
@@ -361,17 +401,20 @@ function LeadForm() {
     return (
       <form className="form-card" onSubmit={handleRegisterSubmit}>
         <h3>أكمل تسجيلك</h3>
-        <div className="form-group">
-          <input type="text" placeholder="الاسم الأول" required value={firstName} onChange={e => setFirstName(e.target.value)} />
+        <div className="form-group floating">
+          <input type="text" placeholder=" " required value={firstName} onChange={e => setFirstName(e.target.value)} />
+          <label>الاسم الأول</label>
         </div>
-        <div className="form-group">
-          <input type="text" placeholder="اسم الأب" required value={fatherName} onChange={e => setFatherName(e.target.value)} />
+        <div className="form-group floating">
+          <input type="text" placeholder=" " required value={fatherName} onChange={e => setFatherName(e.target.value)} />
+          <label>اسم الأب</label>
         </div>
-        <div className="form-group">
-          <input type="text" placeholder="اسم الجد" required value={grandfatherName} onChange={e => setGrandfatherName(e.target.value)} />
+        <div className="form-group floating">
+          <input type="text" placeholder=" " required value={grandfatherName} onChange={e => setGrandfatherName(e.target.value)} />
+          <label>اسم الجد</label>
         </div>
         {error && <p className="form-error">{error}</p>}
-        <button type="submit" className="btn-submit" disabled={loading || !firstName.trim() || !fatherName.trim() || !grandfatherName.trim()}>{loading ? 'جاري التسجيل...' : 'تسجيل'}</button>
+        <button type="submit" className={`btn-submit${loading ? ' is-loading' : ''}`} disabled={loading || !firstName.trim() || !fatherName.trim() || !grandfatherName.trim()} onClick={createRipple}>{loading ? 'جاري التسجيل...' : 'تسجيل'}</button>
       </form>
     )
   }
@@ -409,7 +452,7 @@ function LeadForm() {
         )}
 
         {error && <p className="form-error">{error}</p>}
-        <button type="submit" className="btn-submit" disabled={loading}>{loading ? 'جاري الحفظ...' : 'حفظ'}</button>
+        <button type="submit" className={`btn-submit${loading ? ' is-loading' : ''}`} disabled={loading} onClick={createRipple}>{loading ? 'جاري الحفظ...' : 'حفظ'}</button>
       </form>
     )
   }
@@ -418,7 +461,10 @@ function LeadForm() {
   if (step === 'success') {
     return (
       <div className="form-card form-success">
-        <div className="success-icon">🎉</div>
+        <svg className="success-check" viewBox="0 0 72 72">
+          <circle cx="36" cy="36" r="32" />
+          <path d="M22 36l10 10 18-20" />
+        </svg>
         <h3>تم تسجيلك بنجاح!</h3>
         <p>سيتم تحويلك تلقائياً إلى متجر التطبيقات لبدء استخدام حسابك، أو يمكنك الضغط هنا للوصول مباشرة إلى التطبيق</p>
         <div className="store-buttons">
@@ -456,7 +502,7 @@ function LeadForm() {
       </div>
       {phoneInfo && <p className="form-info">{phoneInfo}</p>}
       {error && <p className="form-error">{error}</p>}
-      <button type="submit" className="btn-submit" disabled={loading}>{loading ? 'جاري الإرسال...' : 'ابدأ التدريس وحقّق دخلاً إضافياً — مجاناً'}</button>
+      <button type="submit" className={`btn-submit${loading ? ' is-loading' : ''}`} disabled={loading} onClick={createRipple}>{loading ? 'جاري الإرسال...' : 'ابدأ التدريس وحقّق دخلاً إضافياً — مجاناً'}</button>
       <p className="form-privacy">بياناتك محمية ولن نشاركها</p>
       <div className="form-badges">
         <span>✅ مجاني تماماً</span>
@@ -470,7 +516,7 @@ function LeadForm() {
 function FAQItem({ question, answer }) {
   const [open, setOpen] = useState(false)
   return (
-    <div className={`faq-item ${open ? 'open' : ''}`} onClick={() => setOpen(!open)}>
+    <div className={`faq-item reveal ${open ? 'open' : ''}`} onClick={() => setOpen(!open)}>
       <div className="faq-question">
         <span>{question}</span>
         <span className="faq-toggle">{open ? '−' : '+'}</span>
@@ -481,6 +527,13 @@ function FAQItem({ question, answer }) {
 }
 
 function App() {
+  const offerRef = useScrollReveal()
+  const howRef = useScrollReveal()
+  const featuresRef = useScrollReveal()
+  const testimonialsRef = useScrollReveal()
+  const faqRef = useScrollReveal()
+  const ctaRef = useScrollReveal()
+
   return (
     <>
       {/* Navbar */}
@@ -525,21 +578,21 @@ function App() {
       </section>
 
       {/* ===== 2. ماذا نقدّم لك ===== */}
-      <section className="offer-section" id="offer">
+      <section className="offer-section" id="offer" ref={offerRef}>
         <div className="section-container">
-          <div className="section-header">
+          <div className="section-header reveal">
             <h2>ركّز على التدريس. واترك الباقي لنا.</h2>
           </div>
-          <div className="pillars-grid">
-            <div className="pillar-card">
+          <div className="pillars-grid reveal-stagger">
+            <div className="pillar-card reveal">
                             <h3>نوصلك بطلاب من 3 دول</h3>
               <p>حين تنضم، يظهر ملفك لآلاف الطلاب وأولياء الأمور في مصر والسعودية والسودان. لا تحتاج إلى التسويق لنفسك — الطلاب يأتون إليك.</p>
             </div>
-            <div className="pillar-card">
+            <div className="pillar-card reveal">
                             <h3>نوفّر لك أدوات توفّر وقتك</h3>
               <p>أنشئ اختبارات بالذكاء الاصطناعي في دقائق. التصحيح تلقائي. تقارير كل طالب جاهزة بنقرة. ساعات العمل الروتيني تتحول إلى ثوانٍ.</p>
             </div>
-            <div className="pillar-card">
+            <div className="pillar-card reveal">
                             <h3>نضمن لك دخلاً شفافاً ومباشراً</h3>
               <p>الطالب يدفع إلكترونياً والمبلغ يظهر في محفظتك فوراً. لا وسطاء ولا تأخير. أموالك تصلك مباشرة.</p>
             </div>
@@ -548,84 +601,84 @@ function App() {
       </section>
 
       {/* ===== 3. كيف يعمل ===== */}
-      <section className="how-section" id="how">
+      <section className="how-section" id="how" ref={howRef}>
         <div className="section-container">
-          <div className="section-header">
+          <div className="section-header reveal">
             <h2>من التسجيل إلى أول حصة مدفوعة</h2>
           </div>
-          <div className="steps-grid">
-            <div className="step-card">
+          <div className="steps-grid reveal-stagger">
+            <div className="step-card reveal">
               <div className="step-number">1</div>
                             <h3>سجّل بياناتك</h3>
               <p>دقيقتان فقط. مجاني تماماً</p>
             </div>
             <div className="step-connector" />
-            <div className="step-card">
+            <div className="step-card reveal">
               <div className="step-number">2</div>
                             <h3>أنشئ ملفك التعريفي</h3>
               <p>أضف خبراتك وأسعارك ومواعيدك. هذا الملف هو واجهتك أمام الطلاب</p>
             </div>
             <div className="step-connector" />
-            <div className="step-card">
+            <div className="step-card reveal">
               <div className="step-number">3</div>
                             <h3>الطلاب يعثرون عليك</h3>
               <p>ملفك يظهر في سوق المعلمين. يحجزون معك مباشرة</p>
             </div>
             <div className="step-connector" />
-            <div className="step-card">
+            <div className="step-card reveal">
               <div className="step-number">4</div>
                             <h3>درّس واحصل على أرباحك</h3>
               <p>قدّم حصصك أونلاين أو حضورياً. الأرباح تصل فوراً</p>
             </div>
           </div>
-          <p className="steps-note">لا تحتاج إلى خبرة تقنية. إذا كنت تستطيع استخدام هاتفك، تستطيع استخدام المدرسة.</p>
+          <p className="steps-note reveal">لا تحتاج إلى خبرة تقنية. إذا كنت تستطيع استخدام هاتفك، تستطيع استخدام المدرسة.</p>
         </div>
       </section>
 
       {/* ===== 4. المميزات ===== */}
-      <section className="features" id="features">
+      <section className="features" id="features" ref={featuresRef}>
         <div className="section-container">
-          <div className="section-header">
+          <div className="section-header reveal">
             <h2>كل ما تحتاجه في تطبيق واحد</h2>
           </div>
-          <div className="features-grid">
-            <div className="feature-card">
+          <div className="features-grid reveal-stagger">
+            <div className="feature-card reveal">
                             <h3>ملف تعريفي احترافي</h3>
               <p>صفحتك الرقمية التي يراها كل طالب يبحث عن معلم في تخصصك</p>
             </div>
-            <div className="feature-card">
+            <div className="feature-card reveal">
                             <h3>جدولة ذكية</h3>
               <p>حدّد مواعيدك والطالب يحجز منها. لا تنسيق يدوي</p>
             </div>
-            <div className="feature-card">
+            <div className="feature-card reveal">
                             <h3>اختبارات بالذكاء الاصطناعي</h3>
               <p>أدخل الموضوع والنظام يُولّد اختباراً متكاملاً في دقائق</p>
             </div>
-            <div className="feature-card">
+            <div className="feature-card reveal">
                             <h3>تصحيح تلقائي فوري</h3>
               <p>النتيجة تظهر مع شرح كل إجابة. لا تصحيح يدوي</p>
             </div>
-            <div className="feature-card">
+            <div className="feature-card reveal">
                             <h3>تقارير أداء لكل طالب</h3>
               <p>بيانات دقيقة تُساعدك على اتخاذ قرارات تدريسية أفضل</p>
             </div>
-            <div className="feature-card">
+            <div className="feature-card reveal">
                             <h3>محفظة إلكترونية</h3>
               <p>الطالب يدفع إلكترونياً والمبلغ يصلك مباشرة. سحب في أي وقت</p>
             </div>
           </div>
-          <p className="features-note">كل هذا مجاني عند التسجيل. المنصة تأخذ نسبة بسيطة من الحصص المدفوعة فقط — نربح فقط حين تربح أنت.</p>
+          <p className="features-note reveal">كل هذا مجاني عند التسجيل. المنصة تأخذ نسبة بسيطة من الحصص المدفوعة فقط — نربح فقط حين تربح أنت.</p>
         </div>
       </section>
 
       {/* ===== 5. شهادات المعلمين ===== */}
-      <section className="testimonials-section" id="testimonials">
+      <section className="testimonials-section" id="testimonials" ref={testimonialsRef}>
         <div className="section-container">
-          <div className="section-header">
+          <div className="section-header reveal">
             <h2>معلمون بدأوا مثلك. واليوم لديهم طلاب ودخل إضافي.</h2>
           </div>
-          <div className="testimonials-grid">
-            <div className="testimonial-card">
+          <div className="testimonials-grid reveal-stagger">
+            <div className="testimonial-card reveal">
               <div className="testimonial-quote">"</div>
               <p>انضممت للمنصة وأنا متردد، لكن خلال أسبوعين حصلت على أول 5 طلاب. الآن لديّ دخل إضافي ثابت بجانب وظيفتي.</p>
               <div className="testimonial-author">
@@ -636,7 +689,7 @@ function App() {
                 </div>
               </div>
             </div>
-            <div className="testimonial-card">
+            <div className="testimonial-card reveal">
               <div className="testimonial-quote">"</div>
               <p>أدوات الذكاء الاصطناعي وفّرت عليّ ساعات كل أسبوع. أنشئ الاختبارات في دقائق بدل ساعات والتصحيح تلقائي.</p>
               <div className="testimonial-author">
@@ -647,7 +700,7 @@ function App() {
                 </div>
               </div>
             </div>
-            <div className="testimonial-card">
+            <div className="testimonial-card reveal">
               <div className="testimonial-quote">"</div>
               <p>المنصة سهلة جداً. الطلاب يحجزون معي مباشرة والأرباح تصل لمحفظتي فوراً. أفضل قرار اتخذته.</p>
               <div className="testimonial-author">
@@ -663,12 +716,12 @@ function App() {
       </section>
 
       {/* ===== 6. الأسئلة الشائعة ===== */}
-      <section className="faq-section" id="faq">
+      <section className="faq-section" id="faq" ref={faqRef}>
         <div className="section-container">
-          <div className="section-header">
+          <div className="section-header reveal">
             <h2>أسئلة يطرحها المعلمون قبل التسجيل</h2>
           </div>
-          <div className="faq-list">
+          <div className="faq-list reveal-stagger">
             <FAQItem question="هل التسجيل مجاني فعلاً؟" answer="نعم. إنشاء حسابك وملفك والظهور في سوق المعلمين — كل ذلك بلا تكلفة. المنصة تأخذ نسبة بسيطة من الحصص المدفوعة فقط." />
             <FAQItem question="هل يمكنني التدريس وأنا في وظيفتي الحالية؟" answer="بالتأكيد. كثير من معلمينا يعملون في مدارس ويستخدمون المنصة كمصدر دخل إضافي في أوقات فراغهم. أنت من يحدد مواعيده." />
             <FAQItem question="هل أحتاج إلى معدات خاصة؟" answer="لا. هاتفك الذكي يكفي. للحصص عبر الإنترنت تحتاج فقط هاتفاً أو حاسوباً واتصالاً بالإنترنت." />
@@ -679,14 +732,14 @@ function App() {
       </section>
 
       {/* ===== 7. CTA النهائي ===== */}
-      <section className="final-cta" id="register">
+      <section className="final-cta" id="register" ref={ctaRef}>
         <div className="section-container">
           <div className="final-cta-container">
-            <div className="final-cta-text">
+            <div className="final-cta-text reveal">
               <h2>أنت على بُعد خطوة واحدة من طلاب جدد ودخل إضافي.</h2>
               <p>سجّل بياناتك الآن — مجاناً وبدون أي التزام.</p>
             </div>
-            <div className="final-cta-form">
+            <div className="final-cta-form reveal">
               <LeadForm />
             </div>
           </div>
