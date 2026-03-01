@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import './App.css'
 
 const API = {
+  checkUser: '/api/v1/auth/check-user',
   otpRequest: '/api/v1/auth/otp/request',
   otpVerify: '/api/v1/auth/otp/verify',
   registerVerify: '/api/v1/auth/v2/register/verify',
@@ -180,24 +181,29 @@ function LeadForm() {
     setLoading(true); setError(''); setPhoneInfo('')
     try {
       const payload = { phone, country_code: countryCode }
-      console.log('OTP Request payload:', payload)
+      // Check if user exists first (without sending OTP)
+      const checkRes = await fetch(API.checkUser, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify(payload)
+      })
+      const checkData = await checkRes.json()
+      if (checkRes.ok && checkData.data?.exists) {
+        setPhoneInfo('هذا الرقم مسجّل بالفعل. يمكنك استخدامه لتسجيل الدخول من خلال التطبيق.')
+        return
+      }
+      // New user — send OTP
       const res = await fetch(API.otpRequest, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
         body: JSON.stringify(payload)
       })
       const data = await res.json()
-      console.log('OTP Request response:', data)
       if (!res.ok) {
         if (data.errors) { const f = Object.values(data.errors)[0]; throw new Error(Array.isArray(f) ? f[0] : f) }
         throw new Error(data.message || 'حدث خطأ، حاول مرة أخرى')
       }
-      const isNew = data.data?.is_new_user || false
-      setIsNewUser(isNew)
-      if (!isNew) {
-        setPhoneInfo('هذا الرقم مسجّل بالفعل. يمكنك استخدامه لتسجيل الدخول من خلال التطبيق.')
-        return
-      }
+      setIsNewUser(true)
       setCountdown(300)
       setStep('otp')
       setTimeout(() => otpRef.current?.focus(), 100)
