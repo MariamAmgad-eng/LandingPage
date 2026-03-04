@@ -662,42 +662,6 @@ function App() {
         </div>
       </section>
 
-      {/* ===== 4. المميزات ===== */}
-      <section className="features" id="features" ref={featuresRef}>
-        <div className="section-container">
-          <div className="section-header reveal">
-            <h2>كل ما تحتاجه في تطبيق واحد</h2>
-          </div>
-          <div className="features-grid reveal-stagger">
-            <div className="feature-card reveal">
-                            <h3>ملف تعريفي احترافي</h3>
-              <p>صفحتك الرقمية التي يراها كل طالب يبحث عن معلم في تخصصك</p>
-            </div>
-            <div className="feature-card reveal">
-                            <h3>جدولة ذكية</h3>
-              <p>حدّد مواعيدك والطالب يحجز منها. لا تنسيق يدوي</p>
-            </div>
-            <div className="feature-card reveal">
-                            <h3>اختبارات بالذكاء الاصطناعي</h3>
-              <p>أدخل الموضوع والنظام يُولّد اختباراً متكاملاً في دقائق</p>
-            </div>
-            <div className="feature-card reveal">
-                            <h3>تصحيح تلقائي فوري</h3>
-              <p>النتيجة تظهر مع شرح كل إجابة. لا تصحيح يدوي</p>
-            </div>
-            <div className="feature-card reveal">
-                            <h3>تقارير أداء لكل طالب</h3>
-              <p>بيانات دقيقة تُساعدك على اتخاذ قرارات تدريسية أفضل</p>
-            </div>
-            <div className="feature-card reveal">
-                            <h3>محفظة إلكترونية</h3>
-              <p>الطالب يدفع إلكترونياً والمبلغ يصلك مباشرة. سحب في أي وقت</p>
-            </div>
-          </div>
-          <p className="features-note reveal">كل هذا مجاني عند التسجيل. المنصة تأخذ نسبة بسيطة من الحصص المدفوعة فقط — نربح فقط حين تربح أنت.</p>
-        </div>
-      </section>
-
       {/* ===== 5. شهادات المعلمين ===== */}
       <section className="testimonials-section" id="testimonials" ref={testimonialsRef}>
         <div className="section-container">
