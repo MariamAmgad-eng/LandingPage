@@ -597,7 +597,7 @@ function App() {
                 <span>طلابك يجدونك — لا تحتاج لتسويق نفسك</span>
               </div>
             </div>
-            <a href="#register" className="btn-primary">ابدأ التدريس مجاناً</a>
+            <a href="#register" className="btn-primary" style={{ marginTop: '2rem', display: 'inline-block' }}>ابدأ التدريس مجاناً</a>
           </div>
           <div className="hero-image">
             <img src="/teacher.webp" alt="معلم يدرّس" className="hero-img" />
