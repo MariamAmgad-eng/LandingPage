@@ -585,22 +585,19 @@ function App() {
       <section className="hero" id="home">
         <div className="hero-container">
           <div className="hero-content">
-            <div className="hero-badge">انضم لأكثر من 1,000 معلم</div>
-            <h1>درّس من أي مكان.<br /><span>واكسب أكثر مما تتخيل.</span></h1>
-            <p>
-              المدرسة تفتح لك باباً على طلاب من مصر والسعودية والسودان — تُدرّسهم بأسلوبك، بأسعارك، في وقتك. والأرباح تصلك مباشرة بلا وسيط. سجّل مجاناً وابدأ اليوم.
-            </p>
+            <h1>أنت تُدرّس.<br /><span>والوصول لآلاف الطلاب مهمتنا.</span></h1>
             <div className="hero-points">
               <div className="hero-point">
-                <span>دخل إضافي مباشر — بلا وسطاء</span>
+                <span>مجاني تماماً عند التسجيل</span>
               </div>
               <div className="hero-point">
-                <span>طلاب من ثلاث دول يبحثون عنك</span>
+                <span>15% فقط من الحصص المدفوعة — لا شيء غير ذلك</span>
               </div>
               <div className="hero-point">
-                <span>أدوات ذكاء اصطناعي توفّر عليك ساعات</span>
+                <span>طلابك يجدونك — لا تحتاج لتسويق نفسك</span>
               </div>
             </div>
+            <a href="#register" className="btn-primary">ابدأ التدريس مجاناً</a>
           </div>
           <div className="hero-image">
             <img src="/teacher.webp" alt="معلم يدرّس" className="hero-img" />
