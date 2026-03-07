@@ -485,11 +485,12 @@ function LeadForm() {
   return (
     <form className="form-card" onSubmit={handlePhoneSubmit}>
       <h3>سجّل الآن وابدأ التدريس مجاناً</h3>
-      <div className="form-group phone-group">
-        <select className="country-select" value={countryCode} onChange={e => setCountryCode(e.target.value)}>
-          <option value="+249">السودان (+249)</option>
-        </select>
-        <input type="tel" placeholder="رقم الهاتف" required value={phone} onChange={e => setPhone(e.target.value.replace(/\D/g, ''))} dir="ltr" />
+      <div className="form-group phone-unified" dir="ltr">
+        <div className="phone-prefix">
+          <span className="phone-flag">🇸🇩</span>
+          <span className="phone-code">+249</span>
+        </div>
+        <input type="tel" placeholder="رقم الهاتف" required value={phone} onChange={e => setPhone(e.target.value.replace(/\D/g, ''))} />
       </div>
       {phoneInfo && <p className="form-info">{phoneInfo}</p>}
       {error && <p className="form-error">{error}</p>}
