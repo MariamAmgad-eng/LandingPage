@@ -673,17 +673,17 @@ function App() {
           </div>
           <div className="pillars-grid reveal-stagger">
             <div className="pillar-card reveal">
-              <div className="pillar-icon">🥇</div>
+              <div className="pillar-icon"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#22c55e" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg></div>
               <h3>الصدارة في سوق المعلمين</h3>
               <p>كلما ارتفع رصيدك، كلما ظهر ملفك أولاً — طلاب أكثر تلقائياً.</p>
             </div>
             <div className="pillar-card reveal">
-              <div className="pillar-icon">🎟️</div>
+              <div className="pillar-icon"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><path d="M13 5v2"/><path d="M13 17v2"/><path d="M13 11v2"/></svg></div>
               <h3>كوبونات خصم بقيمة حقيقية</h3>
               <p>استبدل نقاطك بقسائم شرائية حصرية من أرقى الأماكن والعلامات التجارية التي عقدنا معها شراكات استراتيجية لأجلك.</p>
             </div>
             <div className="pillar-card reveal">
-              <div className="pillar-icon">📣</div>
+              <div className="pillar-icon"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m3 11 18-5v12L3 13v-2z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg></div>
               <h3>تسويق موسّع مجاناً</h3>
               <p>المعلمون في المستويات العليا يحصلون على حملات إضافية على نفقة المنصة.</p>
             </div>
