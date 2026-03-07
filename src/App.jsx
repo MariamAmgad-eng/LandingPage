@@ -487,7 +487,7 @@ function LeadForm() {
       <h3>سجّل الآن وابدأ التدريس مجاناً</h3>
       <div className="form-group phone-unified" dir="ltr">
         <div className="phone-prefix">
-          <span className="phone-flag">🇸🇩</span>
+          <svg className="phone-flag" viewBox="0 0 640 480" width="24" height="18"><rect width="640" height="160" fill="#d21034"/><rect y="160" width="640" height="160" fill="#fff"/><rect y="320" width="640" height="160" fill="#000"/><polygon points="0,0 200,240 0,480" fill="#007229"/></svg>
           <span className="phone-code">+249</span>
         </div>
         <input type="tel" placeholder="رقم الهاتف" required value={phone} onChange={e => setPhone(e.target.value.replace(/\D/g, ''))} />
